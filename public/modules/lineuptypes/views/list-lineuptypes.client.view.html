@@ -1,0 +1,14 @@
+<section data-ng-controller="LineuptypesController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Lineuptypes</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="lineuptype in lineuptypes" data-ng-href="#!/lineuptypes/{{lineuptype._id}}" class="list-group-item">
+            <small class="list-group-item-text">{{lineuptype.created | date:'medium'}} / {{lineuptype.user.displayName}}</small>
+            <h4 class="list-group-item-heading">{{lineuptype.name}}</h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!lineuptypes.$resolved || lineuptypes.length">
+    	No Lineuptypes yet, why don't you <a href="/#!/lineuptypes/create">create one</a>?
+    </div>
+</section>
