@@ -28,7 +28,15 @@ var PositionSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
-	}
+	},
+    isPseudo: {
+        type: Boolean,
+        default: false
+    },
+    includes: [{
+        type: Schema.ObjectId,
+        ref: 'Position'
+    }]
 });
 
 mongoose.model('Position', PositionSchema);

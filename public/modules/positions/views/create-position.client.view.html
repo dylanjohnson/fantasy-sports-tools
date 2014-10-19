@@ -18,6 +18,23 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label" for="isPseudo">
+                        <input type="checkbox" data-ng-model="isPseudo" id="isPseudo" class="form-control">
+                        <span class="checkbox-icon"></span>
+                        <span class="label-text">Is Pseudo Position?</span>
+                    </label>
+                </div>
+                <div class="form-group" ng-if="isPseudo">
+                    <h2>Includes positions</h2>
+                    <div ng-repeat="position in positions">
+                        <label class="control-label">
+                            <input type="checkbox" ng-model="position.selected" ng-change="positionSelectionChange(position)">
+                            <span class="checkbox-icon"></span>
+                            <span class="label-text">{{position.name}}</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>
 				<div data-ng-show="error" class="text-danger">

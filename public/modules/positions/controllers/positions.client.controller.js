@@ -4,13 +4,23 @@
 angular.module('positions').controller('PositionsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Positions',
     function($scope, $stateParams, $location, Authentication, Positions) {
         $scope.authentication = Authentication;
+        
+        $scope.includePositions = [];
+
+        $scope.$watch('isPseudo', function (newValue) {
+            if (!newValue) {
+                $scope.includePositions = [];
+            }
+        });
 
         // Create new Position
         $scope.create = function() {
         	// Create new Position object
             var position = new Positions({
                 name: this.name,
-                abbreviation: this.abbreviation
+                abbreviation: this.abbreviation,
+                includes: this.includePositions,
+                isPseudo: this.isPseudo
             });
 
             // Redirect after save
@@ -59,9 +69,30 @@ angular.module('positions').controller('PositionsController', ['$scope', '$state
 
         // Find existing Position
         $scope.findOne = function() {
-            $scope.position = Positions.get({
-                positionId: $stateParams.positionId
+            Positions.query().$promise.then(function () {
+                $scope.position = Positions.get({
+                    positionId: $stateParams.positionId
+                }, syncPositionSelections);
             });
         };
+
+        // handle selected checkbox change
+        $scope.positionSelectionChange = function (position) {
+            position.selected ? $scope.includePositions.push(position) : removePosition(position);
+        };
+
+        function removePosition(position) {
+            $scope.includePositions = _.filter($scope.includePositions, function (pos) {
+                return pos._id !== position._id;
+            });
+        }
+
+        function syncPositionSelections() {
+            $scope.positions.map(function (pos) {
+                pos.selected = _.findWhere($scope.position.includes, { _id: pos._id }) !== undefined;
+            });
+        }
+
+        $scope.find();
     }
 ]);

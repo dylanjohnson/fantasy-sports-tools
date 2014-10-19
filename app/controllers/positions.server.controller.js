@@ -35,7 +35,13 @@ var getErrorMessage = function(err) {
  * Create a Position
  */
 exports.create = function(req, res) {
-	var position = new Position(req.body);
+	var position;
+
+    req.body.includes = req.body.includes.map(function (pos) {
+        return pos._id;
+    });
+
+    position = new Position(req.body);
 	position.user = req.user;
 
 	position.save(function(err) {
@@ -96,27 +102,36 @@ exports.delete = function(req, res) {
  * List of Positions
  */
 exports.list = function(req, res) {
-	Position.find().sort('-created').populate('user', 'displayName').exec(function(err, positions) {
-		if (err) {
-			return res.send(400, {
-				message: getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(positions);
-		}
-	});
+	Position
+        .find()
+        .sort('-created')
+        .populate('user', 'displayName')
+        .populate('includes')
+        .exec(function(err, positions) {
+            if (err) {
+                return res.send(400, {
+                    message: getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(positions);
+            }
+        });
 };
 
 /**
  * Position middleware
  */
 exports.positionByID = function(req, res, next, id) {
-	Position.findById(id).populate('user', 'displayName').exec(function(err, position) {
-		if (err) return next(err);
-		if (!position) return next(new Error('Failed to load Position ' + id));
-		req.position = position;
-		next();
-	});
+	Position
+        .findById(id)
+        .populate('user', 'displayName')
+        .populate('includes')
+        .exec(function(err, position) {
+            if (err) return next(err);
+            if (!position) return next(new Error('Failed to load Position ' + id));
+            req.position = position;
+            next();
+        });
 };
 
 /**
