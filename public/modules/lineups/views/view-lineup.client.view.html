@@ -1,0 +1,25 @@
+<section data-ng-controller="LineupsController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1>{{lineup.name}}</h1>
+	</div>
+    <div>
+        <h2>Players</h2>
+        <ul class="list-unstyled">
+            <li ng-repeat="player in lineup.players">
+                <span>{{player.position.abbreviation}}</span>
+                <span>{{player.name}}</span>
+            </li>
+        </ul>
+    </div>
+	<div class="pull-right" data-ng-show="authentication.user._id == lineup.user._id">
+		<a class="btn btn-primary" href="/#!/lineups/{{lineup._id}}/edit">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+	<small>
+		<em class="text-muted">Posted on {{lineup.created | date:'mediumDate'}} by {{lineup.user.displayName}}</em>
+	</small>
+</section>

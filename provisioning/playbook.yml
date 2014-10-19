@@ -21,7 +21,6 @@
         - nginx
         - build-essential
         - nodejs
-        - npm
         - mongodb-org
         - openjdk-7-jre-headless
         - firefox
@@ -77,7 +76,7 @@
     - name: start grunt on reboot
       cron: >
         name="start grunt on reboot"
-        job='grunt > /dev/null 2>&1 &'
+        job='cd /vagrant && grunt > /dev/null 2>&1 &'
         special_time=reboot
         user="vagrant"
       sudo: yes
