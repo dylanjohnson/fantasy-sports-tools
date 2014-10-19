@@ -1,0 +1,83 @@
+---
+- hosts: all
+  tasks:
+    - name: update locale
+      shell: update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+      
+    - name: import mongo public key
+      shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+      sudo: yes
+    - name: create mongodb list file
+      shell: echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+
+    - name: add node ubuntu binary distributions repository
+      shell: curl -sL https://deb.nodesource.com/setup | sudo bash -
+      
+    - name: update packages
+      apt: upgrade=safe update_cache=yes
+    - name: install ubuntu packages
+      apt: pkg={{ item }}
+      with_items:
+        - nginx
+        - build-essential
+        - nodejs
+        - npm
+        - mongodb-org
+        - openjdk-7-jre-headless
+        - firefox
+        - xvfb
+        - git
+        - htop
+        - python-psycopg2
+        
+    - file: >
+        src=/usr/bin/nodejs
+        dest=/usr/bin/node
+        state=link
+
+    - name: fix npm cert issue
+      shell: npm config set strict-ssl false
+      sudo: yes
+    - name: install grunt cli
+      shell: npm install -g grunt-cli
+      sudo: yes
+    - name: install bower globally
+      shell: npm install -g bower
+      sudo: yes
+    - name: install npm packages
+      shell: cd /vagrant && sudo npm install
+      sudo: yes
+      
+    - name: start mongo
+      shell: service mongod restart
+      sudo: yes
+    - name: start mongo on reboot
+      cron: >
+        name="start mongo on reboot"
+        job='sudo service mongod restart'
+        special_time=reboot
+        user="vagrant"
+      sudo: yes
+
+    - name: install nginx vhost
+      copy: src=nginx/vhost dest=/etc/nginx/sites-enabled/mean
+    - name: start nginx
+      service: name=nginx state=started
+      
+    - name: add the app domain to hosts
+      lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1 mean.local' line='127.0.0.1 mean.local'
+      
+    - name: install bower deps
+      shell: cd /vagrant && bower install
+      sudo: no
+        
+    - name: start grunt
+      shell: grunt > /dev/null 2>&1 &
+      sudo: no
+    - name: start grunt on reboot
+      cron: >
+        name="start grunt on reboot"
+        job='grunt > /dev/null 2>&1 &'
+        special_time=reboot
+        user="vagrant"
+      sudo: yes
