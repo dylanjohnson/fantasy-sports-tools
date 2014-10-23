@@ -20,13 +20,32 @@ var ContestSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
+    registrationStart: {
+        type: Date,
+        required: 'Add a registration start date'
+    },
+    registrationEnd: {
+        type: Date,
+        required: 'Add a registration end date'
+    },
+    playStart: {
+        type: Date,
+        required: 'Add a play start'
+    },
+    playEnd: {
+        type: Date,
+        required: 'Add a play end'
+    },
+    nflWeek: {
+        type: Number
+    },
     cost: {
         type: Number
     },
-    lineup: {
+    entries: [{
         type: Schema.ObjectId,
-        ref: 'Lineup'
-    },
+        ref: 'ContestEntries'
+    }],
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
