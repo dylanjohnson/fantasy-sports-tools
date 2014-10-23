@@ -12,3 +12,9 @@ Feature: Player Hedging
   Scenario: Players should have a weekly total contest cost
 
   Scenario: It should find groups of players who appear in multiple contests together
+
+  Scenario: Daily league choice lists should indicate when a player is on an opposing lineup in annual leagues
+    # playing against Alfred Morris in Yahoo, Alfred Morris should have a star in DraftKings list
+
+  Scenario: It should add value in daily leagues to players on opposing lineups in annual leagues
+    # playing against Alfred Morris in Yahoo, Alfred Morris should have a higher value score in DraftKings list
